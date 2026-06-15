@@ -1,0 +1,171 @@
+# IDOR (Insecure Direct Object Reference)
+
+## O que é um IDOR?
+
+IDOR significa:
+
+**Insecure Direct Object Reference**
+(Referência Direta de Objetos Insegura)
+
+Essa vulnerabilidade ocorre quando uma aplicação utiliza identificadores fornecidos pelo usuário para acessar recursos, mas não verifica se o usuário possui autorização para acessar aquele recurso específico.
+
+---
+
+## Exemplo Conceitual
+
+Imagine um sistema que utiliza URLs como:
+
+```text
+/profile.php?id=6
+```
+
+O valor `6` representa o identificador do usuário.
+
+O problema surge quando um usuário altera manualmente esse valor:
+
+```text
+/profile.php?id=1
+```
+
+Se o sistema retornar os dados do usuário 1 sem verificar permissões, existe uma vulnerabilidade IDOR.
+
+---
+
+## Como um Pentester Analisa
+
+Ao encontrar parâmetros como:
+
+```text
+?id=1
+?id=25
+?id=100
+```
+
+ou
+
+```text
+/user/15
+/order/300
+/profile/7
+```
+
+um analista de segurança faz algumas perguntas:
+
+* O identificador é previsível?
+* Posso alterar esse valor?
+* O sistema valida permissões?
+* Consigo visualizar recursos de outros usuários?
+
+---
+
+## Sinais Comuns de IDOR
+
+### URLs
+
+```text
+/profile.php?id=5
+/invoice.php?id=200
+/document.php?id=1000
+```
+
+### APIs
+
+```text
+/api/user?id=1
+/api/order?id=50
+/api/document?id=10
+```
+
+### Recursos internos
+
+```text
+/user/5
+/profile/10
+/order/100
+```
+
+---
+
+## Uso de Cookies em Testes Autorizados
+
+Muitas aplicações utilizam cookies de sessão para identificar usuários autenticados.
+
+Exemplo:
+
+```text
+PHPSESSID=abc123xyz
+```
+
+Durante uma análise autorizada em laboratório, ferramentas como:
+
+* Navegador
+* Burp Suite
+* curl
+
+podem utilizar o cookie da sessão atual para reproduzir requisições feitas pelo usuário autenticado.
+
+O objetivo é verificar se o servidor valida corretamente:
+
+1. Quem está autenticado.
+2. Qual recurso está sendo solicitado.
+3. Se existe autorização para acessar esse recurso.
+
+A presença de um cookie válido não deve permitir acesso a recursos pertencentes a outros usuários.
+
+---
+
+## Impactos de um IDOR
+
+Dependendo da aplicação, um IDOR pode permitir:
+
+* Visualização de perfis de outros usuários.
+* Acesso a documentos privados.
+* Leitura de pedidos e faturas.
+* Exposição de informações pessoais.
+* Acesso a funcionalidades administrativas.
+
+---
+
+## Exemplo de Fluxo Vulnerável
+
+```text
+Usuário autenticado
+        ↓
+Altera o identificador
+        ↓
+Servidor consulta o banco
+        ↓
+Servidor retorna os dados
+        ↓
+Nenhuma validação de autorização
+```
+
+---
+
+## Como Corrigir
+
+O servidor deve validar autorização antes de retornar qualquer recurso.
+
+Exemplo lógico:
+
+```text
+Usuário solicita perfil
+        ↓
+Servidor verifica identidade
+        ↓
+Servidor verifica permissão
+        ↓
+Retorna ou bloqueia acesso
+```
+
+Nunca confiar apenas no identificador enviado pelo cliente.
+
+---
+
+## Conclusão
+
+IDOR é uma vulnerabilidade de autorização, não de autenticação.
+
+O usuário pode estar legitimamente logado, mas consegue acessar recursos que não deveria visualizar.
+
+Por esse motivo, IDOR continua sendo uma das falhas mais frequentes encontradas em aplicações web modernas.
