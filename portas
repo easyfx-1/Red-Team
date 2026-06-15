@@ -1,0 +1,289 @@
+# Portas Mais Observadas em Pentests e Análises de Segurança
+
+## Introdução
+
+Durante a fase de reconhecimento, uma das primeiras atividades realizadas por um profissional de segurança é identificar quais portas estão abertas em um sistema. Cada porta aberta representa um serviço disponível e potencialmente uma superfície de ataque.
+
+O objetivo não é assumir que uma porta aberta significa uma vulnerabilidade, mas compreender quais tecnologias estão sendo utilizadas e quais riscos podem estar associados a elas.
+
+---
+
+# Porta 21 - FTP
+
+## Serviço
+
+FTP (File Transfer Protocol)
+
+## Uso
+
+Transferência de arquivos.
+
+## O que chama atenção
+
+* Credenciais fracas
+* Permissões incorretas
+* Acesso anônimo habilitado
+
+## Possíveis riscos
+
+* Exposição de arquivos
+* Vazamento de informações
+* Credenciais transmitidas sem criptografia
+
+---
+
+# Porta 22 - SSH
+
+## Serviço
+
+Secure Shell (SSH)
+
+## Uso
+
+Acesso remoto seguro a servidores Linux e Unix.
+
+## O que chama atenção
+
+* Versão do serviço
+* Métodos de autenticação
+* Configurações inseguras
+
+## Possíveis riscos
+
+* Credenciais comprometidas
+* Configurações incorretas
+* Algoritmos criptográficos obsoletos
+
+---
+
+# Porta 25 - SMTP
+
+## Serviço
+
+Simple Mail Transfer Protocol
+
+## Uso
+
+Envio de e-mails.
+
+## O que chama atenção
+
+* Configuração de relay
+* Informações divulgadas pelo servidor
+
+## Possíveis riscos
+
+* Uso indevido para envio de spam
+* Vazamento de informações
+
+---
+
+# Porta 53 - DNS
+
+## Serviço
+
+Domain Name System
+
+## Uso
+
+Resolução de nomes para endereços IP.
+
+## O que chama atenção
+
+* Transferência de zona
+* Configurações incorretas
+
+## Possíveis riscos
+
+* Divulgação de infraestrutura interna
+* Exposição de subdomínios
+
+---
+
+# Porta 80 - HTTP
+
+## Serviço
+
+HyperText Transfer Protocol
+
+## Uso
+
+Aplicações web.
+
+## O que chama atenção
+
+* Tecnologias utilizadas
+* Diretórios ocultos
+* APIs
+* Painéis administrativos
+
+## Possíveis riscos
+
+* Falhas de autenticação
+* Falhas de autorização
+* Exposição de informações
+
+---
+
+# Porta 443 - HTTPS
+
+## Serviço
+
+HTTP Seguro
+
+## Uso
+
+Aplicações web protegidas por TLS/SSL.
+
+## O que chama atenção
+
+* Certificados
+* Protocolos suportados
+* Configuração TLS
+
+## Possíveis riscos
+
+* Configuração criptográfica inadequada
+* Certificados inválidos
+
+---
+
+# Porta 445 - SMB
+
+## Serviço
+
+Server Message Block
+
+## Uso
+
+Compartilhamento de arquivos em ambientes Windows.
+
+## O que chama atenção
+
+* Compartilhamentos expostos
+* Informações de domínio
+* Versão do protocolo
+
+## Possíveis riscos
+
+* Vazamento de informações
+* Movimentação lateral em redes corporativas
+
+---
+
+# Porta 1433 - Microsoft SQL Server
+
+## Serviço
+
+Microsoft SQL Server
+
+## Uso
+
+Banco de dados.
+
+## O que chama atenção
+
+* Exposição direta à internet
+* Configurações de autenticação
+
+## Possíveis riscos
+
+* Vazamento de dados
+* Acesso indevido ao banco
+
+---
+
+# Porta 3306 - MySQL
+
+## Serviço
+
+MySQL
+
+## Uso
+
+Banco de dados muito utilizado em aplicações web.
+
+## O que chama atenção
+
+* Exposição externa
+* Versão do serviço
+
+## Possíveis riscos
+
+* Exposição de dados
+* Configuração insegura
+
+---
+
+# Porta 3389 - RDP
+
+## Serviço
+
+Remote Desktop Protocol
+
+## Uso
+
+Acesso remoto a sistemas Windows.
+
+## O que chama atenção
+
+* Exposição à internet
+* Configurações de autenticação
+
+## Possíveis riscos
+
+* Tentativas de acesso não autorizado
+* Comprometimento de contas
+
+---
+
+# Porta 5432 - PostgreSQL
+
+## Serviço
+
+PostgreSQL
+
+## Uso
+
+Banco de dados relacional.
+
+## O que chama atenção
+
+* Exposição externa
+* Configurações padrão
+
+## Possíveis riscos
+
+* Vazamento de dados
+* Acesso indevido
+
+---
+
+# Porta 8080
+
+## Serviço
+
+HTTP Alternativo
+
+## Uso
+
+Painéis administrativos, aplicações web e ambientes de desenvolvimento.
+
+## O que chama atenção
+
+* Aplicações esquecidas
+* Painéis de administração
+* Ambientes de teste
+
+## Possíveis riscos
+
+* Exposição de funcionalidades administrativas
+* Divulgação de informações sensíveis
+
+---
+
+# Conclusão
+
+Uma porta aberta não significa necessariamente uma vulnerabilidade. O papel do profissional de segurança é identificar os serviços em execução, compreender sua finalidade e avaliar os riscos associados à sua configuração e exposição.
+
+O reconhecimento eficiente permite construir um mapa da superfície de ataque e direcionar as etapas seguintes da avaliação de segurança.
