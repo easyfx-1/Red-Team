@@ -1,0 +1,108 @@
+# Fase 1 - Reconhecimento (Reconnaissance)
+
+## Objetivo
+
+O objetivo do reconhecimento é compreender a superfície de ataque da aplicação antes de tentar explorar qualquer vulnerabilidade.
+
+Nesta fase, o foco não é atacar o sistema, mas coletar informações que permitam entender sua estrutura, funcionalidades e possíveis pontos de entrada.
+
+---
+
+## Mentalidade do Pentester
+
+Um pentester experiente evita fazer suposições.
+
+Antes de testar vulnerabilidades, ele busca responder perguntas fundamentais:
+
+* O que a aplicação faz?
+* Quem são os usuários?
+* Quais funcionalidades existem?
+* Existem áreas restritas?
+* Como ocorre a autenticação?
+* Existem APIs?
+* Quais tecnologias estão sendo utilizadas?
+
+---
+
+## Mapeamento Inicial
+
+Durante a análise inicial da aplicação, devem ser identificados:
+
+### Páginas públicas
+
+* Página inicial
+* Login
+* Cadastro
+* Recuperação de senha
+* Contato
+* Upload de arquivos
+
+### Recursos acessíveis
+
+* URLs
+* Diretórios
+* Parâmetros
+* APIs
+* Arquivos expostos
+
+---
+
+## Enumeração de Funcionalidades
+
+Após identificar os componentes da aplicação, o próximo passo é entender o fluxo de utilização.
+
+Exemplos:
+
+1. Criar uma conta de usuário.
+2. Realizar login.
+3. Navegar por todas as páginas disponíveis.
+4. Observar parâmetros enviados na URL.
+5. Analisar requisições HTTP.
+6. Registrar possíveis identificadores utilizados pelo sistema.
+
+Nesta etapa, toda informação é considerada valiosa.
+
+---
+
+## Mapeamento de Perfis
+
+Um dos principais objetivos é identificar diferentes níveis de acesso.
+
+Exemplos:
+
+* Usuário comum
+* Moderador
+* Gerente
+* Administrador
+
+Compreender as diferenças entre permissões pode revelar falhas de controle de acesso posteriormente.
+
+---
+
+## Coleta de Evidências
+
+Todas as descobertas devem ser documentadas.
+
+Registrar:
+
+* URLs encontradas
+* Endpoints identificados
+* Funcionalidades disponíveis
+* Fluxos de autenticação
+* Possíveis áreas administrativas
+
+Uma boa documentação durante o reconhecimento reduz erros e facilita as próximas etapas da avaliação.
+
+---
+
+## Resultado Esperado
+
+Ao final da fase de reconhecimento, o pentester deve possuir um mapa claro da aplicação contendo:
+
+* Estrutura geral do sistema
+* Perfis de usuários existentes
+* Funcionalidades disponíveis
+* Fluxos de autenticação
+* Potenciais superfícies de ataque
+
+Somente após essa compreensão é recomendável avançar para testes de autorização, autenticação e exploração de vulnerabilidades.
