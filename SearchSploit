@@ -1,0 +1,312 @@
+# SearchSploit - Guia Completo
+
+## Objetivo
+
+O SearchSploit é uma ferramenta presente no Kali Linux que permite pesquisar vulnerabilidades e exploits públicos diretamente pelo terminal utilizando o banco de dados local do Exploit-DB.
+
+Seu principal objetivo durante um pentest é responder à pergunta:
+
+> "Existe alguma vulnerabilidade conhecida para este software ou versão?"
+
+---
+
+# Fluxo Mental do Pentester
+
+Nunca utilize o SearchSploit sem antes realizar enumeração.
+
+Fluxo recomendado:
+
+```text
+Enumeração
+↓
+Identificação de Serviço
+↓
+Identificação de Versão
+↓
+Pesquisa de Vulnerabilidades
+↓
+Análise do Exploit
+↓
+Validação
+```
+
+Exemplo:
+
+```bash
+nmap -sV 10.10.10.10
+```
+
+Resultado:
+
+```text
+22/tcp   OpenSSH 9.6p1
+8889/tcp UnrealIRCd 5.1.6.1
+```
+
+Agora temos informações suficientes para iniciar a pesquisa.
+
+---
+
+# Atualizando o Banco de Dados
+
+```bash
+searchsploit -u
+```
+
+Atualiza a base local do Exploit-DB.
+
+---
+
+# Pesquisando pelo Nome do Serviço
+
+Exemplo:
+
+```bash
+searchsploit openssh
+```
+
+```bash
+searchsploit apache
+```
+
+```bash
+searchsploit unrealircd
+```
+
+---
+
+# Pesquisando pela Versão
+
+Quanto mais específica a busca, melhor.
+
+```bash
+searchsploit "openssh 9.6"
+```
+
+```bash
+searchsploit "apache 2.4.49"
+```
+
+```bash
+searchsploit "unrealircd 5.1.6.1"
+```
+
+---
+
+# Como Descobrir o Nome da Vulnerabilidade
+
+Ao pesquisar:
+
+```bash
+searchsploit unrealircd
+```
+
+Você pode encontrar:
+
+```text
+UnrealIRCd 5.1.6.1 - Backdoor Command Execution
+```
+
+O nome da vulnerabilidade normalmente aparece na coluna "Exploit Title".
+
+Nesse exemplo:
+
+```text
+Backdoor Command Execution
+```
+
+Isso já fornece uma ideia do impacto:
+
+* Backdoor
+* Execução remota de comandos
+* Possível acesso inicial
+
+---
+
+# Pesquisando por CVE
+
+Muitas vezes o Nmap, Nessus ou relatórios informam o CVE.
+
+Exemplo:
+
+```bash
+searchsploit CVE-2021-41773
+```
+
+```bash
+searchsploit CVE-2017-0144
+```
+
+---
+
+# Filtrando Resultados
+
+Utilizando grep:
+
+```bash
+searchsploit apache | grep 2.4
+```
+
+```bash
+searchsploit openssh | grep Enumeration
+```
+
+---
+
+# Visualizando o Código do Exploit
+
+Visualizar sem copiar:
+
+```bash
+searchsploit -x 50383
+```
+
+ou
+
+```bash
+searchsploit --examine 50383
+```
+
+---
+
+# Copiando o Exploit
+
+```bash
+searchsploit -m 50383
+```
+
+ou
+
+```bash
+searchsploit --mirror 50383
+```
+
+O exploit será copiado para o diretório atual.
+
+---
+
+# Obtendo o Caminho Completo
+
+```bash
+searchsploit unrealircd
+```
+
+Exemplo:
+
+```text
+linux/remote/13853.pl
+```
+
+Esse caminho representa a localização dentro do banco do Exploit-DB.
+
+---
+
+# Nem Todo Exploit Funciona
+
+Antes de utilizar qualquer exploit, valide:
+
+* Versão exata
+* Sistema operacional
+* Arquitetura
+* Dependências
+* Condições necessárias
+
+Exemplo:
+
+```text
+OpenSSH 7.2 - Username Enumeration
+```
+
+Não significa que funcionará em:
+
+```text
+OpenSSH 9.6
+```
+
+---
+
+# Integração com Nmap
+
+Fluxo comum:
+
+```bash
+nmap -sV alvo
+```
+
+Resultado:
+
+```text
+Apache 2.4.49
+```
+
+Pesquisa:
+
+```bash
+searchsploit apache 2.4.49
+```
+
+Resultado:
+
+```text
+Apache HTTP Server 2.4.49 - Path Traversal
+```
+
+Próximo passo:
+
+* Ler documentação
+* Entender a falha
+* Verificar requisitos
+* Testar em ambiente autorizado
+
+---
+
+# Integração com Metasploit
+
+Após identificar uma vulnerabilidade:
+
+```bash
+searchsploit unrealircd
+```
+
+Pesquisar módulo:
+
+```bash
+msfconsole
+```
+
+```bash
+search unrealircd
+```
+
+Resultado:
+
+```text
+exploit/unix/irc/unreal_ircd_5161_backdoor
+```
+
+---
+
+# Boas Práticas
+
+* Enumere antes de pesquisar exploits.
+* Não execute exploits sem entender o que fazem.
+* Leia o código quando possível.
+* Documente versões encontradas.
+* Valide se a vulnerabilidade realmente afeta o alvo.
+* Mantenha o banco de dados atualizado.
+
+---
+
+# Resumo
+
+| Comando                          | Função                      |
+| -------------------------------- | --------------------------- |
+| searchsploit nome                | Pesquisar software          |
+| searchsploit versão              | Pesquisar versão específica |
+| searchsploit CVE                 | Pesquisar CVE               |
+| searchsploit -u                  | Atualizar banco             |
+| searchsploit -x ID               | Visualizar exploit          |
+| searchsploit -m ID               | Copiar exploit              |
+| searchsploit termo | grep filtro | Filtrar resultados          |
+
+> SearchSploit não encontra vulnerabilidades. Ele ajuda a correlacionar os resultados da enumeração com vulnerabilidades já conhecidas publicamente.
