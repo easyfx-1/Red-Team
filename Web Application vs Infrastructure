@@ -1,0 +1,269 @@
+# Enumeração em Pentest: Web Application vs Infrastructure
+
+## O que é Enumeração?
+
+Enumeração é o processo de coletar informações sobre um alvo antes de qualquer tentativa de exploração. É uma das fases mais importantes de um pentest, pois todas as etapas seguintes dependem da qualidade das informações obtidas.
+
+O objetivo da enumeração é responder perguntas como:
+
+* O que está exposto?
+* Quais tecnologias estão sendo utilizadas?
+* Existem serviços vulneráveis?
+* Existem pontos de entrada?
+* Existem usuários ou recursos acessíveis?
+
+Uma enumeração mal executada pode fazer com que vulnerabilidades importantes passem despercebidas.
+
+---
+
+# Web Application Enumeration
+
+## Objetivo
+
+A enumeração de aplicações web tem como foco identificar informações sobre um site, API ou aplicação web.
+
+Aqui estamos analisando a aplicação desenvolvida, e não necessariamente o servidor que a hospeda.
+
+### Principais Áreas
+
+* Tecnologias utilizadas
+* Frameworks
+* CMS
+* APIs
+* Diretórios ocultos
+* Arquivos sensíveis
+* Painéis administrativos
+* Mecanismos de autenticação
+* Controle de acesso
+* Funcionalidades de upload
+
+---
+
+## Ferramentas Comuns
+
+### WhatWeb
+
+Identifica tecnologias utilizadas pela aplicação.
+
+```bash
+whatweb https://alvo.com
+```
+
+Exemplos de informações obtidas:
+
+* Apache
+* Nginx
+* PHP
+* WordPress
+* Laravel
+* React
+
+---
+
+### Wappalyzer
+
+Extensão utilizada para identificar tecnologias diretamente pelo navegador.
+
+---
+
+### Gobuster
+
+Descoberta de diretórios e arquivos ocultos.
+
+```bash
+gobuster dir -u https://alvo.com -w wordlist.txt
+```
+
+---
+
+### FFUF
+
+Ferramenta moderna para fuzzing e descoberta de conteúdo.
+
+```bash
+ffuf -u https://alvo.com/FUZZ -w wordlist.txt
+```
+
+---
+
+### Curl
+
+Permite analisar respostas HTTP manualmente.
+
+```bash
+curl -I https://alvo.com
+```
+
+---
+
+### Burp Suite
+
+Ferramenta essencial para testes web.
+
+Permite:
+
+* Interceptar requisições
+* Modificar parâmetros
+* Testar autenticação
+* Descobrir IDOR
+* Testar SQL Injection
+* Analisar APIs
+
+---
+
+# Infrastructure Enumeration
+
+## Objetivo
+
+A enumeração de infraestrutura tem como foco identificar sistemas, serviços, portas abertas e configurações do ambiente.
+
+Aqui analisamos os servidores, dispositivos de rede e serviços que sustentam a aplicação.
+
+### Principais Áreas
+
+* Hosts ativos
+* Portas abertas
+* Serviços expostos
+* Versões de software
+* Credenciais padrão
+* Compartilhamentos de rede
+* Serviços vulneráveis
+* Configurações inseguras
+
+---
+
+## Ferramentas Comuns
+
+### Nmap
+
+Ferramenta mais importante da enumeração de infraestrutura.
+
+```bash
+nmap -sV -sC 10.10.10.10
+```
+
+Permite descobrir:
+
+* Portas abertas
+* Serviços
+* Versões
+* Scripts NSE
+
+Exemplo:
+
+```text
+22/tcp   OpenSSH 9.6
+80/tcp   Apache 2.4
+445/tcp  SMB
+```
+
+---
+
+### Netcat
+
+Utilizado para verificar conectividade e banners.
+
+```bash
+nc 10.10.10.10 22
+```
+
+---
+
+### NetExec (CrackMapExec)
+
+Enumeração de ambientes Windows.
+
+```bash
+netexec smb 10.10.10.10
+```
+
+Permite identificar:
+
+* Usuários
+* Compartilhamentos
+* Sessões SMB
+* Configurações de domínio
+
+---
+
+### Enum4Linux
+
+Ferramenta para enumeração SMB.
+
+```bash
+enum4linux 10.10.10.10
+```
+
+---
+
+### SSH
+
+Acesso e enumeração de sistemas Linux.
+
+```bash
+ssh usuario@10.10.10.10
+```
+
+---
+
+### Searchsploit
+
+Pesquisa vulnerabilidades conhecidas localmente.
+
+```bash
+searchsploit openssh
+```
+
+```bash
+searchsploit unrealircd
+```
+
+Baseado no banco de dados do Exploit-DB.
+
+---
+
+# Comparação Entre os Dois Tipos
+
+| Aspecto              | Web Application               | Infrastructure                     |
+| -------------------- | ----------------------------- | ---------------------------------- |
+| Foco                 | Aplicação                     | Rede e servidores                  |
+| Alvo                 | Site, API, Painel             | Hosts, serviços e dispositivos     |
+| Objetivo             | Encontrar falhas na aplicação | Encontrar falhas na infraestrutura |
+| Exemplos             | SQLi, XSS, IDOR               | SSH vulnerável, SMB exposto        |
+| Ferramenta Principal | Burp Suite                    | Nmap                               |
+
+---
+
+# Fluxo Mental de um Pentester
+
+O processo correto normalmente segue a seguinte sequência:
+
+```text
+Enumeração
+    ↓
+Análise
+    ↓
+Hipóteses
+    ↓
+Validação
+    ↓
+Exploração
+    ↓
+Relatório
+```
+
+Ferramentas apenas coletam informações. O verdadeiro diferencial de um pentester está na capacidade de interpretar os resultados e conectar informações aparentemente isoladas para encontrar caminhos de exploração.
+
+---
+
+# Resumo
+
+Web Application Pentest responde:
+
+"Como a aplicação foi construída e onde existem falhas em sua lógica ou implementação?"
+
+Infrastructure Pentest responde:
+
+"Como o ambiente foi configurado e quais serviços ou sistemas podem ser comprometidos?"
+
+Em ambos os casos, a enumeração é a base de todo o processo e costuma ser a fase mais importante de um teste de invasão.
