@@ -1,0 +1,120 @@
+# 🔎 Reconhecimento em Red Team 
+
+
+## 1. Infraestrutura do alvo
+O foco é descobrir como o sistema está construído:
+
+- CDN (ex: Cloudflare, Akamai, Fastly)
+- provedores de cloud (AWS, Azure, GCP)
+- servidores expostos
+- subdomínios e serviços paralelos
+
+Ferramentas comuns:
+- Wappalyzer
+- BuiltWith
+- Amass (enumeração de subdomínios)
+- Subfinder
+
+---
+
+## 2. Superfície de ataque
+O objetivo é mapear possíveis pontos de entrada:
+
+- páginas de login
+- APIs públicas e privadas
+- painéis administrativos
+- ambientes de teste (dev, staging)
+- endpoints esquecidos
+
+---
+
+## 3. Informações técnicas do site
+Análise de detalhes que revelam a estrutura:
+
+- headers HTTP
+- cookies e tokens
+- certificados SSL/TLS
+- respostas do servidor (200, 403, 302)
+- comportamento de bloqueio
+
+---
+
+# 🛡️ Quando o site usa Cloudflare
+
+Se aparecer algo como:
+
+- Server: cloudflare
+- CF-RAY: xxxx
+
+Isso indica que o site está atrás de uma **CDN + WAF (Web Application Firewall)**.
+
+O que isso significa:
+
+- o servidor real está oculto
+- existe filtragem de tráfego
+- ataques diretos podem ser bloqueados
+- proteção contra DDoS e bots
+
+---
+
+# ⚔️ O que o pentester faz nesse caso
+
+
+### 1. Entender a camada de proteção
+- identificar Cloudflare/WAF
+- observar respostas de bloqueio (403, CAPTCHA, JS challenge)
+
+---
+
+### 2. Procurar o servidor de origem
+O foco muda para encontrar o backend real:
+
+- subdomínios esquecidos
+- registros DNS antigos
+- vazamentos em GitHub
+- ambientes de desenvolvimento expostos
+
+Ferramentas:
+- Shodan
+- Censys
+- theHarvester
+
+---
+
+### 3. Explorar outras superfícies
+Se o site principal estiver protegido:
+
+- APIs móveis
+- serviços cloud mal configurados
+- buckets públicos (S3, Azure Blob)
+- endpoints internos expostos
+
+---
+
+# 🧠 Cloudflare significa parar o ataque?
+
+Não.
+
+Significa **mudar a estratégia**.
+
+O ataque deixa de ser direto e passa a ser:
+
+- OSINT (coleta de informações)
+- enumeração de subdomínios
+- análise de infraestrutura
+- busca por exposições indiretas
+
+---
+
+# 📌 Resumo final
+
+- Reconhecimento = entender o alvo antes de atacar
+- Cloudflare = camada de proteção e ocultação
+- WAF não bloqueia todo ataque, mas muda o foco
+- pentester profissional não força ataque direto, ele procura caminhos alternativos
+
+---
+
+# 🧠 Ideia principal
+
+Em Red Team, quando existe Cloudflare, o objetivo não é “bater na porta da frente”, mas descobrir **qual outra entrada real está exposta por trás da proteção**.
