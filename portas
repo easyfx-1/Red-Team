@@ -287,3 +287,19 @@ Painéis administrativos, aplicações web e ambientes de desenvolvimento.
 Uma porta aberta não significa necessariamente uma vulnerabilidade. O papel do profissional de segurança é identificar os serviços em execução, compreender sua finalidade e avaliar os riscos associados à sua configuração e exposição.
 
 O reconhecimento eficiente permite construir um mapa da superfície de ataque e direcionar as etapas seguintes da avaliação de segurança.
+
+Protocolo	Porta	Seguro?
+FTP	21	❌ Não
+FTPS	990	✅ Sim
+HTTP	80	❌ Não
+HTTPS	443	✅ Sim
+IMAP	143	❌ Não
+IMAPS	993	✅ Sim
+POP3	110	❌ Não
+POP3S	995	✅ Sim
+SMTP	25	❌ Não
+SMTP Submission	587	✅ STARTTLS
+SMTPS	465	✅ TLS
+SSH	22	✅ Sim
+SFTP	22	✅ Sim
+Telnet	23	❌ Não
