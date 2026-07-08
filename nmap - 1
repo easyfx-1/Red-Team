@@ -1,0 +1,234 @@
+# Nmap - Tipos de Scans e Principais Opções
+
+## Visão Geral
+
+O Nmap (Network Mapper) é uma das principais ferramentas de reconhecimento em Pentest, utilizada para identificar:
+
+- Hosts ativos
+- Portas abertas
+- Serviços em execução
+- Versões dos serviços
+- Sistema operacional
+- Possíveis vulnerabilidades
+
+---
+
+# Tipos de Scan
+
+## TCP Connect Scan (`-sT`)
+
+Realiza o **handshake TCP completo**.
+
+Fluxo:
+
+```
+SYN → SYN/ACK → ACK → RST
+```
+
+### Características
+
+- Não requer privilégios de administrador.
+- Utiliza as funções de rede do sistema operacional.
+- Gera mais registros (logs).
+- Menos furtivo.
+
+### Exemplo
+
+```bash
+nmap -sT TARGET_IP
+```
+
+---
+
+## TCP SYN Scan (`-sS`)
+
+Também conhecido como **Half-Open Scan**.
+
+Fluxo:
+
+```
+SYN → SYN/ACK → RST
+```
+
+A conexão nunca é totalmente estabelecida.
+
+### Características
+
+- Requer privilégios (sudo/root).
+- Mais rápido.
+- Mais furtivo.
+- Método padrão do Nmap quando executado como root.
+
+### Exemplo
+
+```bash
+sudo nmap -sS TARGET_IP
+```
+
+---
+
+## UDP Scan (`-sU`)
+
+Como o UDP não possui handshake, o Nmap identifica portas abertas pela ausência de resposta.
+
+### Porta fechada
+
+```
+UDP →
+← ICMP Port Unreachable
+```
+
+### Porta aberta
+
+```
+UDP →
+(nenhuma resposta ou resposta do serviço)
+```
+
+### Características
+
+- Mais lento.
+- Bastante utilizado para encontrar serviços como DNS, SNMP e NTP.
+
+### Exemplo
+
+```bash
+sudo nmap -sU TARGET_IP
+```
+
+---
+
+# Opções Importantes
+
+| Opção | Função |
+|--------|--------|
+| `-p-` | Escaneia todas as 65535 portas |
+| `-p1-1023` | Escaneia apenas portas 1 até 1023 |
+| `-F` | Escaneia as 100 portas mais comuns |
+| `-r` | Escaneia portas em ordem crescente |
+| `-T0` até `-T5` | Define a velocidade do scan |
+| `--max-rate` | Limita o número máximo de pacotes por segundo |
+| `--min-rate` | Define a taxa mínima de envio de pacotes |
+| `--min-parallelism` | Define o mínimo de sondas paralelas |
+
+---
+
+# Velocidade (`-T`)
+
+| Opção | Velocidade |
+|--------|------------|
+| `-T0` | Muito lenta |
+| `-T1` | Lenta |
+| `-T2` | Moderada |
+| `-T3` | Padrão |
+| `-T4` | Rápida |
+| `-T5` | Muito rápida |
+
+> Em laboratórios (TryHackMe, Hack The Box e CTFs), `-T4` costuma ser suficiente.
+
+---
+
+# Serviços Comuns em UDP
+
+| Porta | Serviço |
+|--------|----------|
+| 53 | DNS |
+| 67/68 | DHCP |
+| 69 | TFTP |
+| 123 | NTP |
+| 161 | SNMP |
+| 500 | IKE/IPsec |
+
+---
+
+# Comandos Úteis
+
+## Scan rápido
+
+```bash
+sudo nmap -F TARGET_IP
+```
+
+## Scan SYN
+
+```bash
+sudo nmap -sS TARGET_IP
+```
+
+## Scan TCP Connect
+
+```bash
+nmap -sT TARGET_IP
+```
+
+## Scan UDP
+
+```bash
+sudo nmap -sU TARGET_IP
+```
+
+## Todas as portas
+
+```bash
+sudo nmap -sS -p- TARGET_IP
+```
+
+## Descobrir versão dos serviços
+
+```bash
+sudo nmap -sV TARGET_IP
+```
+
+## Detectar sistema operacional
+
+```bash
+sudo nmap -O TARGET_IP
+```
+
+## Executar scripts padrão
+
+```bash
+sudo nmap -sC TARGET_IP
+```
+
+## Scan completo
+
+```bash
+sudo nmap -sS -sV -sC -O -p- -T4 TARGET_IP
+```
+
+---
+
+# Comparação dos Scans
+
+| Scan | Handshake | Root | Velocidade | Furtividade |
+|------|-----------|------|------------|-------------|
+| `-sT` | Completo | ❌ | Média | Baixa |
+| `-sS` | Parcial | ✅ | Alta | Alta |
+| `-sU` | Não possui | ✅ | Baixa | Média |
+
+---
+
+# Boas Práticas
+
+- Utilize **`-sS`** sempre que possível.
+- Faça **UDP Scan** quando houver suspeita de serviços UDP.
+- Use **`-p-`** durante um reconhecimento completo.
+- Combine **`-sV`**, **`-O`** e **`-sC`** para obter mais informações sobre o alvo.
+- Ajuste a velocidade (`-T`) conforme o ambiente para evitar perda de pacotes ou detecção desnecessária.
+
+---
+
+# Resumo
+
+| Objetivo | Comando |
+|----------|----------|
+| Scan rápido | `nmap -F IP` |
+| Scan furtivo | `sudo nmap -sS IP` |
+| Scan TCP comum | `nmap -sT IP` |
+| Scan UDP | `sudo nmap -sU IP` |
+| Todas as portas | `sudo nmap -sS -p- IP` |
+| Identificar serviços | `sudo nmap -sV IP` |
+| Identificar SO | `sudo nmap -O IP` |
+| Scripts padrão | `sudo nmap -sC IP` |
+| Reconhecimento completo | `sudo nmap -sS -sV -sC -O -p- -T4 IP` |
