@@ -1,0 +1,89 @@
+# MAC Spoofing
+
+O **MAC Address** é o identificador único da placa de rede e, embora seja gravado pelo fabricante, ele **pode ser alterado por software**.
+
+Essa alteração temporária é conhecida como **MAC Spoofing**.
+
+## Por que alterar o MAC Address?
+
+### 🛡️ Privacidade
+
+Ao trocar o MAC Address verdadeiro, dificulta-se a identificação e o rastreamento do dispositivo em redes locais.
+
+Exemplo:
+
+```text
+MAC original:
+A4:5E:60:B8:C1:AF
+
+MAC alterado:
+00:11:22:33:44:55
+```
+
+---
+
+### 🔓 Bypass de controles baseados em MAC
+
+Algumas redes utilizam uma **lista de MAC Addresses permitidos (Whitelist)**.
+
+Se um atacante descobrir um MAC autorizado, ele pode alterar o MAC da sua máquina para esse endereço e tentar obter acesso à rede.
+
+Exemplo:
+
+```text
+Rede Wi-Fi
+
+MAC permitido:
+00:0C:29:76:43:E1
+
+↓
+
+Atacante altera seu MAC para:
+
+00:0C:29:76:43:E1
+
+↓
+
+Pode conseguir acessar a rede caso não existam outros mecanismos de autenticação.
+```
+
+Esse processo é chamado de **MAC Spoofing**.
+
+---
+
+## Como descobrir um MAC válido?
+
+Um atacante pode capturar o tráfego da rede utilizando ferramentas como:
+
+- Wireshark
+- tcpdump
+- Bettercap
+
+Após identificar um MAC autorizado, ele pode cloná-lo.
+
+---
+
+## Limitações
+
+O MAC Address é utilizado apenas na **rede local (LAN)**.
+
+Ele **não é enviado pela Internet**.
+
+Além disso, o MAC Spoofing **não garante acesso** se a rede utilizar outros mecanismos de segurança, como:
+
+- WPA2/WPA3 Enterprise (802.1X)
+- Certificados digitais
+- Autenticação por usuário e senha
+- NAC (Network Access Control)
+
+---
+
+## Resumo
+
+| Conceito | Descrição |
+|----------|-----------|
+| **MAC Address** | Identificador da placa de rede. |
+| **MAC Spoofing** | Alteração do MAC Address para outro valor. |
+| **Objetivos** | Privacidade, testes de segurança e bypass de filtros baseados em MAC. |
+
+> **Importante:** O MAC Spoofing é uma técnica utilizada em testes de segurança e auditorias autorizadas. Utilizá-la em redes sem permissão pode violar políticas de segurança e a legislação aplicável.
