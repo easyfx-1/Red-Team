@@ -1,0 +1,143 @@
+# Descobrindo Hosts Ativos com ARP
+
+O protocolo **ARP (Address Resolution Protocol)** permite descobrir quais dispositivos estão ativos na **mesma rede local (LAN)**, mesmo que o **ICMP (ping)** esteja bloqueado.
+
+## Fluxo de Descoberta
+
+### 1. Descobrir seu IP e máscara
+
+```bash
+ip a
+```
+
+Exemplo:
+
+```
+192.168.1.134/24
+```
+
+---
+
+### 2. Identificar a rede
+
+A máscara `/24` indica que sua rede é:
+
+```
+192.168.1.0/24
+```
+
+Faixa de IPs possíveis:
+
+```
+192.168.1.1
+...
+192.168.1.254
+```
+
+> Isso **não significa** que todos existem, apenas que **podem existir**.
+
+---
+
+### 3. Descobrir o Gateway
+
+```bash
+ip route
+```
+
+Exemplo:
+
+```
+default via 192.168.1.1
+```
+
+Gateway:
+
+```
+192.168.1.1
+```
+
+---
+
+### 4. Testar um Host com ARP
+
+```bash
+sudo arping 192.168.1.1
+```
+
+Resposta:
+
+```
+192.168.1.1 is at 14:33:75:83:EC:A8
+```
+
+Isso significa que o dispositivo existe e respondeu com seu **MAC Address**.
+
+---
+
+### 5. Descobrir todos os Hosts da Rede
+
+```bash
+sudo arp-scan --localnet
+```
+
+Exemplo:
+
+```
+192.168.1.1
+Gateway
+
+192.168.1.15
+Notebook
+
+192.168.1.20
+Servidor
+
+192.168.1.50
+Impressora
+```
+
+---
+
+## Por que usar ARP?
+
+Mesmo que o administrador bloqueie o **ICMP (ping)**, os dispositivos normalmente continuam respondendo **ARP**, pois ele é essencial para a comunicação na rede local.
+
+---
+
+## Fluxo de um Pentester
+
+```
+ip a
+      │
+      ▼
+Descobrir IP e Máscara
+      │
+      ▼
+Calcular a Rede
+      │
+      ▼
+Descobrir Gateway
+      │
+      ▼
+ARP Scan
+      │
+      ▼
+Identificar Hosts Ativos
+      │
+      ▼
+Nmap (Portas e Serviços)
+```
+
+---
+
+## Comandos Essenciais
+
+```bash
+ip a                     # Ver IP e máscara
+ip route                 # Ver gateway
+ip neigh                 # Ver tabela ARP
+sudo arping <IP>         # Descobrir o MAC de um host
+sudo arp-scan --localnet # Descobrir todos os hosts da LAN
+```
+
+> **Importante:** O ARP funciona **apenas na rede local (LAN)**. Ele **não atravessa roteadores**, portanto não é possível descobrir o MAC Address de um servidor na Internet usando ARP.
