@@ -1,0 +1,470 @@
+# Nmap - Comparação dos Scans Avançados e Eficiência Atual
+
+## Introdução
+
+O Nmap possui diversos tipos de scans utilizando diferentes combinações de flags TCP.
+
+Alguns scans foram criados para:
+
+- descobrir serviços;
+- analisar portas;
+- identificar regras de firewall;
+- testar mecanismos de defesa;
+- avaliar exposição de uma rede.
+
+Porém, com a evolução dos firewalls e sistemas IDS/IPS, alguns métodos antigos perderam eficiência.
+
+---
+
+# Ranking de Utilidade Atual
+
+## 🥇 1. SYN Scan (`-sS`) - Mais utilizado
+
+Comando:
+
+```bash
+nmap -sS IP
+```
+
+### Objetivo:
+
+Descobrir portas abertas e serviços ativos.
+
+### Vantagens:
+
+✅ Rápido  
+✅ Preciso  
+✅ Pouco invasivo  
+✅ Funciona na maioria dos ambientes modernos  
+✅ Base principal de reconhecimento em pentests
+
+### Funcionamento:
+
+Envia:
+
+```
+SYN
+```
+
+Recebe:
+
+```
+SYN/ACK → Porta aberta
+
+RST → Porta fechada
+```
+
+### Uso atual:
+
+★★★★★
+
+É o scan mais importante do Nmap.
+
+---
+
+# 🥈 2. Service Detection (`-sV`)
+
+Comando:
+
+```bash
+nmap -sV IP
+```
+
+### Objetivo:
+
+Identificar:
+
+- versão do serviço;
+- software utilizado;
+- possíveis vulnerabilidades.
+
+Exemplo:
+
+```
+80/tcp open
+Apache 2.4.49
+```
+
+### Uso atual:
+
+★★★★★
+
+Muito utilizado após descobrir portas abertas.
+
+---
+
+# 🥉 3. ACK Scan (`-sA`)
+
+Comando:
+
+```bash
+nmap -sA IP
+```
+
+### Objetivo:
+
+Analisar regras de firewall.
+
+Não descobre serviços.
+
+Mostra:
+
+- portas filtradas;
+- portas liberadas pelo firewall.
+
+### Uso atual:
+
+★★★★☆
+
+Muito útil para:
+
+- análise de firewall;
+- auditorias;
+- Blue Team.
+
+---
+
+# 4. UDP Scan (`-sU`)
+
+Comando:
+
+```bash
+nmap -sU IP
+```
+
+### Objetivo:
+
+Encontrar serviços UDP.
+
+Exemplos:
+
+```
+53 DNS
+161 SNMP
+123 NTP
+```
+
+### Desvantagem:
+
+- Mais lento;
+- Mais difícil de interpretar.
+
+### Uso atual:
+
+★★★★☆
+
+Importante porque muitos serviços críticos usam UDP.
+
+---
+
+# 5. NSE Scripts (`-sC`)
+
+Comando:
+
+```bash
+nmap -sC IP
+```
+
+### Objetivo:
+
+Executar scripts de análise.
+
+Pode identificar:
+
+- configurações inseguras;
+- informações adicionais;
+- vulnerabilidades conhecidas.
+
+### Uso atual:
+
+★★★★★
+
+Muito utilizado em reconhecimento profissional.
+
+---
+
+# 6. Fragmentação (`-f`)
+
+Comando:
+
+```bash
+nmap -f IP
+```
+
+### Objetivo:
+
+Dividir pacotes para tentar passar por filtros antigos.
+
+### Hoje:
+
+❌ Pouco eficiente contra firewalls modernos.
+
+Sistemas atuais remontam os pacotes antes da análise.
+
+### Uso atual:
+
+★★☆☆☆
+
+Mais útil para estudo e testes específicos.
+
+---
+
+# 7. FIN Scan (`-sF`)
+
+Comando:
+
+```bash
+nmap -sF IP
+```
+
+Envia:
+
+```
+FIN
+```
+
+### Objetivo:
+
+Explorar respostas TCP incomuns.
+
+### Hoje:
+
+❌ Pouco confiável.
+
+Firewalls modernos detectam facilmente.
+
+### Uso atual:
+
+★★☆☆☆
+
+Principalmente para aprendizado.
+
+---
+
+# 8. Null Scan (`-sN`)
+
+Comando:
+
+```bash
+nmap -sN IP
+```
+
+Envia:
+
+```
+Nenhuma flag TCP
+```
+
+### Objetivo:
+
+Analisar comportamento TCP.
+
+### Hoje:
+
+❌ Pouco utilizado em ambientes reais.
+
+### Uso atual:
+
+★★☆☆☆
+
+Mais acadêmico.
+
+---
+
+# 9. Xmas Scan (`-sX`)
+
+Comando:
+
+```bash
+nmap -sX IP
+```
+
+Envia:
+
+```
+FIN + PSH + URG
+```
+
+### Objetivo:
+
+Testar respostas TCP específicas.
+
+### Hoje:
+
+❌ Pouca eficiência contra sistemas modernos.
+
+### Uso atual:
+
+★★☆☆☆
+
+Bom para entender TCP.
+
+---
+
+# 10. Window Scan (`-sW`)
+
+Comando:
+
+```bash
+nmap -sW IP
+```
+
+### Objetivo:
+
+Analisar campo TCP Window.
+
+### Hoje:
+
+Pouco utilizado porque depende de comportamentos específicos do sistema.
+
+### Uso atual:
+
+★★☆☆☆
+
+---
+
+# 11. Idle Scan / Zombie Scan (`-sI`)
+
+Comando:
+
+```bash
+nmap -sI ZOMBIE_IP TARGET_IP
+```
+
+### Objetivo:
+
+Realizar scan usando outra máquina como intermediária.
+
+### Vantagens:
+
+✅ Muito furtivo
+
+### Limitações:
+
+❌ Difícil de encontrar um zombie adequado  
+❌ Sistemas modernos dificultam seu funcionamento
+
+### Uso atual:
+
+★★☆☆☆
+
+Mais usado para estudo avançado.
+
+---
+
+# 12. Spoofing e Decoy
+
+## IP Spoofing
+
+```bash
+nmap -S IP_FALSO IP_ALVO
+```
+
+## Decoy Scan
+
+```bash
+nmap -D IP1,IP2,ME IP_ALVO
+```
+
+### Objetivo:
+
+Dificultar identificação do atacante.
+
+### Problemas:
+
+- respostas podem não retornar;
+- logs modernos conseguem correlacionar eventos.
+
+### Uso atual:
+
+★★☆☆☆
+
+---
+
+# Melhores combinações para um Pentest moderno
+
+## Descoberta inicial
+
+```bash
+nmap -sn REDE
+```
+
+Descobrir hosts ativos.
+
+---
+
+## Scan de portas
+
+```bash
+nmap -sS IP
+```
+
+---
+
+## Identificação de serviços
+
+```bash
+nmap -sV IP
+```
+
+---
+
+## Scripts básicos
+
+```bash
+nmap -sC IP
+```
+
+---
+
+## Tudo junto
+
+```bash
+nmap -sS -sV -sC IP
+```
+
+---
+
+# Fluxo profissional de reconhecimento
+
+```
+1 - Descobrir hosts
+
+        ↓
+
+2 - Descobrir portas
+
+        ↓
+
+3 - Identificar serviços
+
+        ↓
+
+4 - Detectar versões
+
+        ↓
+
+5 - Procurar vulnerabilidades
+
+        ↓
+
+6 - Explorar somente com autorização
+```
+
+---
+
+# Conclusão
+
+Embora o Nmap possua muitos scans avançados, os métodos mais eficientes atualmente são:
+
+## Top 5:
+
+1. SYN Scan (`-sS`)
+2. Service Detection (`-sV`)
+3. NSE Scripts (`-sC`)
+4. UDP Scan (`-sU`)
+5. ACK Scan (`-sA`) para análise de firewall
+
+Scans como Null, FIN, Xmas, Idle e Fragmentação continuam importantes para entender TCP e técnicas de evasão, porém possuem menor eficiência contra infraestruturas modernas devido ao avanço dos firewalls, IDS/IPS e sistemas de monitoramento.
+
+O conhecimento de todos os métodos é importante para entender tanto o lado ofensivo (Red Team) quanto defensivo (Blue Team).
