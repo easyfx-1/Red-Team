@@ -1,0 +1,491 @@
+# 🔎 Nmap - Advanced Port Scans e Técnicas de Evasão
+
+## 📌 Introdução
+
+O **Nmap (Network Mapper)** é uma ferramenta utilizada para **descoberta de hosts, análise de portas e reconhecimento de redes**.
+
+Nos scans básicos, o Nmap utiliza principalmente o **TCP 3-way handshake** para identificar se uma porta está aberta.
+
+Funcionamento normal de uma conexão TCP:
+
+```
+Cliente                 Servidor
+
+SYN  ---------------->
+
+       <-------------- SYN + ACK
+
+ACK  ---------------->
+
+Conexão estabelecida
+```
+
+Nos scans avançados, o Nmap utiliza diferentes combinações de **TCP Flags** para analisar como sistemas e firewalls respondem aos pacotes.
+
+---
+
+# 🚩 TCP Flags
+
+As principais flags TCP são:
+
+| Flag | Função |
+|------|--------|
+| SYN | Iniciar uma conexão |
+| ACK | Confirmar recebimento de dados |
+| FIN | Finalizar uma conexão |
+| RST | Reiniciar uma conexão |
+| PSH | Enviar dados imediatamente |
+| URG | Indicar dados urgentes |
+
+---
+
+# 📡 Estados das Portas
+
+Durante um scan, uma porta pode apresentar três estados principais:
+
+## Open (Aberta)
+
+Existe um serviço funcionando naquela porta.
+
+Exemplo:
+
+```
+22  SSH
+80  HTTP
+443 HTTPS
+```
+
+---
+
+## Closed (Fechada)
+
+A máquina existe, mas não existe serviço naquela porta.
+
+Resposta comum:
+
+```
+RST
+```
+
+---
+
+## Filtered (Filtrada)
+
+Um firewall ou mecanismo de segurança impede a comunicação.
+
+Normalmente:
+
+```
+Sem resposta
+```
+
+---
+
+# ⚔️ Tipos de Scans Avançados
+
+## 1. Null Scan
+
+Comando:
+
+```bash
+nmap -sN IP
+```
+
+O Null Scan envia um pacote TCP sem nenhuma flag ativada.
+
+Exemplo:
+
+```
+[sem flags]
+```
+
+Objetivo:
+
+- analisar respostas do sistema;
+- identificar portas;
+- testar comportamento de filtros.
+
+---
+
+# 2. FIN Scan
+
+Comando:
+
+```bash
+nmap -sF IP
+```
+
+Envia somente a flag:
+
+```
+FIN
+```
+
+A flag FIN normalmente é usada para encerrar conexões, porém aqui ela é enviada sem existir uma conexão ativa.
+
+---
+
+# 3. Xmas Scan
+
+Comando:
+
+```bash
+nmap -sX IP
+```
+
+Envia as flags:
+
+```
+FIN + PSH + URG
+```
+
+O nome vem da ideia de várias luzes acesas em uma árvore de Natal.
+
+---
+
+# 4. Maimon Scan
+
+Comando:
+
+```bash
+nmap -sM IP
+```
+
+Utiliza:
+
+```
+FIN + ACK
+```
+
+Explora comportamentos específicos de alguns sistemas baseados em BSD.
+
+---
+
+# 5. ACK Scan
+
+Comando:
+
+```bash
+nmap -sA IP
+```
+
+Envia somente:
+
+```
+ACK
+```
+
+O objetivo não é descobrir portas abertas.
+
+Ele é utilizado para:
+
+- analisar regras de firewall;
+- identificar filtragem de pacotes;
+- descobrir se existe proteção de rede.
+
+---
+
+# 6. Window Scan
+
+Comando:
+
+```bash
+nmap -sW IP
+```
+
+Analisa o campo:
+
+```
+TCP Window
+```
+
+das respostas RST para tentar diferenciar portas abertas e fechadas.
+
+---
+
+# 7. Custom Scan
+
+Comando:
+
+```bash
+nmap --scanflags
+```
+
+Permite criar combinações próprias de flags TCP.
+
+Exemplo:
+
+```bash
+nmap --scanflags SYNFIN IP
+```
+
+---
+
+# 🛡️ Técnicas de Evasão e Spoofing
+
+Essas técnicas tentam dificultar a identificação da origem de um scan.
+
+---
+
+# IP Spoofing
+
+Comando:
+
+```bash
+nmap -S IP_FALSO alvo
+```
+
+Altera o endereço IP de origem do pacote.
+
+Objetivo:
+
+- esconder a origem real;
+- dificultar rastreamento.
+
+---
+
+# MAC Spoofing
+
+Comando:
+
+```bash
+nmap --spoof-mac
+```
+
+Altera o endereço MAC da máquina.
+
+Mais utilizado em redes locais.
+
+---
+
+# Decoy Scan
+
+Comando:
+
+```bash
+nmap -D IP1,IP2,IP3 alvo
+```
+
+Mistura o IP real com endereços falsos.
+
+O alvo recebe tráfego de vários endereços, dificultando descobrir o verdadeiro scanner.
+
+---
+
+# Fragmentação de Pacotes
+
+Comandos:
+
+```bash
+nmap -f IP
+```
+
+ou
+
+```bash
+nmap -ff IP
+```
+
+Divide os pacotes em fragmentos menores.
+
+Objetivo:
+
+- tentar passar por filtros simples;
+- dificultar a análise por alguns sistemas.
+
+---
+
+# Idle Scan (Zombie Scan)
+
+Comando:
+
+```bash
+nmap -sI zombie IP
+```
+
+Utiliza uma terceira máquina para realizar o scan.
+
+Funcionamento:
+
+```
+Atacante
+    |
+    |
+Zombie
+    |
+    |
+Alvo
+```
+
+O alvo enxerga o zombie realizando a comunicação.
+
+---
+
+# 📊 Opções para obter mais informações no Nmap
+
+## Mostrar motivo da resposta
+
+Comando:
+
+```bash
+nmap --reason IP
+```
+
+Exibe por que uma porta foi considerada:
+
+- aberta;
+- fechada;
+- filtrada.
+
+---
+
+## Modo detalhado
+
+Comando:
+
+```bash
+nmap -v IP
+```
+
+Mais informações:
+
+```bash
+nmap -vv IP
+```
+
+---
+
+## Debug
+
+Comando:
+
+```bash
+nmap -d IP
+```
+
+Mostra informações internas do funcionamento do Nmap.
+
+---
+
+# 🔥 Testando Firewalls
+
+O comportamento do Nmap pode mudar dependendo da existência de um firewall.
+
+## Sem firewall:
+
+```
+Nmap
+ |
+ |
+Servidor responde diretamente
+```
+
+---
+
+## Com firewall:
+
+```
+Nmap
+ |
+ |
+Firewall
+ |
+X
+Bloqueio
+```
+
+Comparar os resultados ajuda a entender:
+
+- regras de filtragem;
+- comportamento da rede;
+- mecanismos de defesa.
+
+---
+
+# 📋 Resumo dos Principais Comandos
+
+```bash
+nmap -sN IP
+```
+
+Null Scan
+
+
+```bash
+nmap -sF IP
+```
+
+FIN Scan
+
+
+```bash
+nmap -sX IP
+```
+
+Xmas Scan
+
+
+```bash
+nmap -sM IP
+```
+
+Maimon Scan
+
+
+```bash
+nmap -sA IP
+```
+
+ACK Scan
+
+
+```bash
+nmap -sW IP
+```
+
+Window Scan
+
+
+```bash
+nmap -sI IP
+```
+
+Idle/Zombie Scan
+
+
+```bash
+nmap -f IP
+```
+
+Fragmentação de pacotes
+
+
+```bash
+nmap -D IP1,IP2 IP
+```
+
+Decoy Scan
+
+
+---
+
+# 🎯 Conclusão
+
+Os scans avançados do Nmap mostram que a ferramenta não serve apenas para verificar portas abertas.
+
+Ela também permite analisar:
+
+- comportamento TCP;
+- regras de firewall;
+- filtros de rede;
+- mecanismos de defesa.
+
+Esse conhecimento é fundamental para:
+
+- 🔴 Red Team
+- 🔵 Blue Team
+- 🛡️ SOC Analyst
+- 🌐 Network Security
+- 🔍 Pentest
+
+O entendimento das respostas TCP permite compreender como atacantes realizam reconhecimento e como equipes de segurança podem detectar e proteger seus ambientes.
