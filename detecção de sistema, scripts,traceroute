@@ -1,0 +1,102 @@
+# Nmap - Enumeração Profissional
+
+## Descoberta de Serviços
+
+```bash
+nmap -sV IP
+```
+
+Identifica:
+- Serviço
+- Versão
+- Banner
+
+---
+
+## Detecção do Sistema Operacional
+
+```bash
+nmap -O IP
+```
+
+Tenta identificar o sistema operacional através da Fingerprint TCP/IP.
+
+---
+
+## Scripts NSE
+
+Scripts padrão:
+
+```bash
+nmap -sC IP
+```
+
+Script específico:
+
+```bash
+nmap --script http-title IP
+```
+
+Todos os scripts HTTP:
+
+```bash
+nmap --script "http*"
+```
+
+Listar scripts:
+
+```bash
+ls /usr/share/nmap/scripts
+```
+
+---
+
+## Traceroute
+
+```bash
+nmap --traceroute IP
+```
+
+Mostra o caminho (Hops) até o alvo.
+
+---
+
+## Salvar Resultados
+
+```bash
+-oN scan.nmap
+```
+
+Formato para leitura.
+
+```bash
+-oG scan.gnmap
+```
+
+Ideal para pesquisar com grep.
+
+```bash
+-oX scan.xml
+```
+
+Ideal para importar em ferramentas.
+
+```bash
+-oA scan
+```
+
+Salva nos três formatos.
+
+---
+
+## Comando Completo
+
+```bash
+sudo nmap -sS -sV -O -sC -oA scan IP
+```
+
+- `-sS` → SYN Scan
+- `-sV` → Descobre versões
+- `-O` → Detecta SO
+- `-sC` → Executa scripts NSE
+- `-oA` → Salva os resultados
