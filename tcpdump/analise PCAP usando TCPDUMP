@@ -1,0 +1,451 @@
+# TCPDump - Metodologia Profissional para Análise de PCAP
+
+> **Princípio:** o tcpdump é excelente para uma análise rápida. Ele permite descobrir IPs, portas, serviços, flags, banners e até credenciais sem abrir o Wireshark.
+
+---
+
+# Estrutura básica
+
+Ler um arquivo PCAP
+
+```bash
+tcpdump -nr arquivo.pcap
+```
+
+Mais detalhes
+
+```bash
+tcpdump -vnr arquivo.pcap
+```
+
+Ainda mais detalhes
+
+```bash
+tcpdump -vvnr arquivo.pcap
+```
+
+Máximo de detalhes
+
+```bash
+tcpdump -vvvnr arquivo.pcap
+```
+
+---
+
+# 1. Descobrir quem participou da comunicação
+
+Todos os IPs
+
+```bash
+tcpdump -nr captura.pcap
+```
+
+Ou
+
+```bash
+tcpdump -nr captura.pcap | awk '{print $3,$5}'
+```
+
+---
+
+# 2. Procurar um IP específico
+
+```bash
+tcpdump -nr captura.pcap host 192.168.0.10
+```
+
+Origem
+
+```bash
+tcpdump -nr captura.pcap src host 192.168.0.10
+```
+
+Destino
+
+```bash
+tcpdump -nr captura.pcap dst host 37.59.174.225
+```
+
+---
+
+# 3. Descobrir quais portas foram utilizadas
+
+Porta específica
+
+```bash
+tcpdump -nr captura.pcap port 80
+```
+
+TCP
+
+```bash
+tcpdump -nr captura.pcap tcp
+```
+
+UDP
+
+```bash
+tcpdump -nr captura.pcap udp
+```
+
+---
+
+# 4. Descobrir conexões estabelecidas
+
+Pacotes SYN
+
+```bash
+tcpdump -nr captura.pcap 'tcp[tcpflags] & tcp-syn != 0'
+```
+
+SYN + ACK
+
+```bash
+tcpdump -nr captura.pcap 'tcp[tcpflags] & (tcp-syn|tcp-ack) == (tcp-syn|tcp-ack)'
+```
+
+Conexões encerradas (FIN)
+
+```bash
+tcpdump -nr captura.pcap 'tcp[tcpflags] & tcp-fin != 0'
+```
+
+Reset
+
+```bash
+tcpdump -nr captura.pcap 'tcp[tcpflags] & tcp-rst != 0'
+```
+
+---
+
+# 5. Descobrir serviços encontrados
+
+Exemplo
+
+```bash
+tcpdump -vnr invasao.pcap src host 37.59.174.225
+```
+
+Resultado
+
+```
+37.59.174.225.80 > 192.168.0.10.43696
+```
+
+Sabemos que existe um serviço na porta
+
+```
+80
+```
+
+Outro exemplo
+
+```
+37.59.174.225.21011
+```
+
+Agora sabemos que existe um serviço também na porta
+
+```
+21011
+```
+
+---
+
+# 6. Mostrar apenas conexões encerradas
+
+```bash
+tcpdump -vnr invasao.pcap \
+src host 37.59.174.225 \
+| cut -d "," -f1 \
+| grep -v tos \
+| grep -v "S" \
+| grep "F\."
+```
+
+Esse comando foi o que utilizamos para descobrir rapidamente quais conexões realmente foram utilizadas.
+
+---
+
+# 7. Descobrir banners rapidamente
+
+O tcpdump mostra apenas os pacotes.
+
+Para descobrir banners, utilize:
+
+```bash
+strings captura.pcap
+```
+
+Exemplos
+
+Servidor HTTP
+
+```bash
+strings captura.pcap | grep Server
+```
+
+FTP
+
+```bash
+strings captura.pcap | grep FTP
+```
+
+SSH
+
+```bash
+strings captura.pcap | grep SSH
+```
+
+PHP
+
+```bash
+strings captura.pcap | grep PHP
+```
+
+---
+
+# 8. Descobrir versões dos serviços
+
+HTTP
+
+```bash
+strings captura.pcap | grep "Server:"
+```
+
+Exemplo
+
+```
+Server: Apache/2.2.22 (Debian)
+```
+
+FTP
+
+```bash
+strings captura.pcap | grep ProFTPD
+```
+
+Resultado
+
+```
+220 ProFTPD 1.3.4a Server
+```
+
+SSH
+
+```bash
+strings captura.pcap | grep OpenSSH
+```
+
+SMTP
+
+```bash
+strings captura.pcap | grep Postfix
+```
+
+---
+
+# 9. Descobrir credenciais
+
+Usuário
+
+```bash
+strings captura.pcap | grep username
+```
+
+Senha
+
+```bash
+strings captura.pcap | grep password
+```
+
+Ou
+
+```bash
+strings captura.pcap | grep login
+```
+
+---
+
+# 10. Descobrir URLs acessadas
+
+```bash
+strings captura.pcap | grep GET
+```
+
+```bash
+strings captura.pcap | grep POST
+```
+
+Ou
+
+```bash
+strings captura.pcap | grep HTTP
+```
+
+---
+
+# 11. Descobrir Referer
+
+```bash
+strings captura.pcap | grep Referer
+```
+
+---
+
+# 12. Descobrir User-Agent
+
+```bash
+strings captura.pcap | grep User-Agent
+```
+
+---
+
+# 13. Descobrir Cookies
+
+```bash
+strings captura.pcap | grep Cookie
+```
+
+---
+
+# 14. Descobrir Host
+
+```bash
+strings captura.pcap | grep Host
+```
+
+---
+
+# 15. Descobrir arquivos enviados
+
+```bash
+strings captura.pcap | grep ".php"
+```
+
+```bash
+strings captura.pcap | grep ".exe"
+```
+
+```bash
+strings captura.pcap | grep ".zip"
+```
+
+```bash
+strings captura.pcap | grep ".rar"
+```
+
+---
+
+# 16. Descobrir comandos FTP
+
+```bash
+strings captura.pcap | grep -Ei "USER|PASS|STOR|RETR|LIST|CWD|MKD|RMD"
+```
+
+---
+
+# 17. Descobrir DNS
+
+```bash
+tcpdump -nr captura.pcap port 53
+```
+
+---
+
+# 18. Descobrir tráfego HTTP
+
+```bash
+tcpdump -nr captura.pcap port 80
+```
+
+HTTPS
+
+```bash
+tcpdump -nr captura.pcap port 443
+```
+
+FTP
+
+```bash
+tcpdump -nr captura.pcap port 21
+```
+
+SSH
+
+```bash
+tcpdump -nr captura.pcap port 22
+```
+
+---
+
+# 19. Encontrar IPs que mais aparecem
+
+```bash
+tcpdump -nr captura.pcap \
+| awk '{print $3}' \
+| cut -d. -f1-4 \
+| sort \
+| uniq -c \
+| sort -nr
+```
+
+---
+
+# 20. Descobrir portas abertas encontradas durante o ataque
+
+```bash
+tcpdump -nr captura.pcap \
+| awk '{print $3}' \
+| sed 's/.*\.//' \
+| sort \
+| uniq -c
+```
+
+---
+
+# Fluxo Profissional
+
+```
+PCAP
+   │
+   ▼
+Identificar IPs
+   │
+   ▼
+Filtrar atacante
+   │
+   ▼
+Encontrar portas
+   │
+   ▼
+Encontrar conexões FIN/SYN
+   │
+   ▼
+Descobrir serviços
+   │
+   ▼
+Extrair banners (strings)
+   │
+   ▼
+Descobrir versão
+   │
+   ▼
+Descobrir credenciais
+   │
+   ▼
+Encontrar evidências
+```
+
+---
+
+# Dica Profissional
+
+Em ambientes de resposta a incidentes, é comum combinar as ferramentas:
+
+- **tcpdump** → filtra e identifica rapidamente IPs, portas e conexões.
+- **strings** → extrai texto legível (banners, URLs, credenciais, cabeçalhos HTTP).
+- **tshark** → faz extração estruturada dos protocolos.
+- **Wireshark** → reconstrói e analisa detalhadamente o tráfego.
+
+Essa combinação reduz drasticamente o tempo de investigação e é muito utilizada em análises forenses e operações de SOC.
