@@ -1,0 +1,573 @@
+# Wireshark - Metodologia Profissional para Encontrar Informações em um PCAP
+
+> **Princípio:** um analista não procura respostas aleatoriamente. Ele reduz o universo de pacotes utilizando filtros até chegar exatamente ao tráfego relevante.
+
+---
+
+# 1. Entenda o fluxo do ataque
+
+Antes de procurar qualquer informação, identifique:
+
+- Quem é o atacante?
+- Quem é a vítima?
+- Quais IPs participaram?
+- Quais portas foram utilizadas?
+- Qual protocolo está sendo usado?
+
+No Wireshark:
+
+```
+Statistics → Endpoints
+Statistics → Conversations
+```
+
+Essas duas opções mostram rapidamente quem mais se comunica na captura.
+
+---
+
+# 2. Descubra os serviços ativos
+
+Verifique quais portas realmente estabeleceram comunicação.
+
+Filtros úteis:
+
+```
+tcp.flags.syn == 1 && tcp.flags.ack == 1
+```
+
+Mostra conexões aceitas.
+
+ou
+
+```
+tcp.flags.fin == 1
+```
+
+Mostra conexões encerradas normalmente.
+
+> Se existe FIN, a conexão foi estabelecida e houve troca de dados.
+
+---
+
+# 3. Vá para o início da conexão
+
+Nunca analise apenas o último pacote.
+
+Clique em um pacote da conexão e escolha:
+
+```
+Follow
+    ↓
+TCP Stream
+```
+
+Assim você verá toda a conversa.
+
+---
+
+# 4. Descubra a versão do serviço
+
+Os banners normalmente aparecem logo no início da conexão.
+
+Exemplos:
+
+FTP
+
+```
+220 ProFTPD 1.3.4a Server
+```
+
+SSH
+
+```
+SSH-2.0-OpenSSH_7.2p2
+```
+
+SMTP
+
+```
+220 Postfix
+```
+
+HTTP
+
+```
+Server: Apache/2.2.22 (Debian)
+```
+
+---
+
+# 5. Descubra informações do servidor HTTP
+
+Procure pelos cabeçalhos:
+
+```
+Server:
+```
+
+```
+X-Powered-By:
+```
+
+Exemplo:
+
+```
+Server: Apache/2.2.22 (Debian)
+X-Powered-By: PHP/5.4.45
+```
+
+Filtros:
+
+```
+http.response
+```
+
+ou
+
+```
+http
+```
+
+---
+
+# 6. Descubra credenciais
+
+Procure métodos POST.
+
+Filtro:
+
+```
+http.request.method == "POST"
+```
+
+Depois utilize:
+
+```
+Follow TCP Stream
+```
+
+Normalmente aparecerá:
+
+```
+username=admin
+password=123456
+```
+
+---
+
+# 7. Descubra URLs acessadas
+
+Filtro:
+
+```
+http.request
+```
+
+Campos importantes:
+
+```
+GET /admin
+
+POST /login
+
+GET /upload.php
+```
+
+---
+
+# 8. Descubra o navegador
+
+Procure:
+
+```
+User-Agent
+```
+
+Exemplo:
+
+```
+Mozilla/5.0
+
+Firefox/60
+
+Chrome/125
+```
+
+---
+
+# 9. Descubra o Referer
+
+Procure:
+
+```
+Referer:
+```
+
+Exemplo:
+
+```
+Referer:
+http://empresa.com/login.php
+```
+
+---
+
+# 10. Descubra IP e Porta
+
+No cabeçalho IP:
+
+```
+Source
+Destination
+```
+
+No TCP:
+
+```
+Source Port
+
+Destination Port
+```
+
+O socket é:
+
+```
+IP:PORTA
+```
+
+Exemplo
+
+```
+37.59.174.225:80
+```
+
+---
+
+# 11. Descubra Flags TCP
+
+Campo:
+
+```
+Flags
+```
+
+Principais:
+
+```
+SYN
+```
+
+Início da conexão.
+
+```
+SYN,ACK
+```
+
+Aceitação da conexão.
+
+```
+ACK
+```
+
+Confirmação.
+
+```
+PSH,ACK
+```
+
+Transporte de dados.
+
+```
+RST
+```
+
+Conexão abortada.
+
+```
+FIN
+```
+
+Encerramento normal.
+
+---
+
+# 12. Descubra o fabricante da placa de rede
+
+Abra:
+
+```
+Ethernet II
+```
+
+Copie apenas os três primeiros bytes do MAC.
+
+Exemplo:
+
+```
+00:22:5A
+```
+
+Pesquise no OUI Lookup:
+
+https://www.wireshark.org/tools/oui-lookup.html
+
+---
+
+# 13. Descubra arquivos transferidos
+
+No menu:
+
+```
+File
+
+Export Objects
+
+HTTP
+```
+
+ou
+
+```
+SMB
+
+FTP
+
+TFTP
+```
+
+---
+
+# 14. Descubra malware
+
+Procure:
+
+```
+.exe
+
+.dll
+
+.ps1
+
+.vbs
+
+.zip
+
+.rar
+
+.iso
+```
+
+Ou exporte os objetos.
+
+---
+
+# 15. Procure texto rapidamente
+
+Às vezes a maneira mais rápida não é o Wireshark.
+
+No Linux:
+
+```
+strings arquivo.pcap
+```
+
+Depois filtre:
+
+```
+strings arquivo.pcap | grep Server
+```
+
+```
+strings arquivo.pcap | grep HTTP
+```
+
+```
+strings arquivo.pcap | grep POST
+```
+
+```
+strings arquivo.pcap | grep GET
+```
+
+```
+strings arquivo.pcap | grep password
+```
+
+```
+strings arquivo.pcap | grep username
+```
+
+```
+strings arquivo.pcap | grep FTP
+```
+
+Foi exatamente assim que encontramos:
+
+```
+220 ProFTPD 1.3.4a Server
+```
+
+Sem precisar abrir centenas de pacotes.
+
+---
+
+# 16. Filtros que mais uso
+
+Todos os HTTP
+
+```
+http
+```
+
+Requisições HTTP
+
+```
+http.request
+```
+
+Respostas HTTP
+
+```
+http.response
+```
+
+POST
+
+```
+http.request.method == "POST"
+```
+
+GET
+
+```
+http.request.method == "GET"
+```
+
+DNS
+
+```
+dns
+```
+
+FTP
+
+```
+ftp
+```
+
+SSH
+
+```
+ssh
+```
+
+ICMP
+
+```
+icmp
+```
+
+TCP
+
+```
+tcp
+```
+
+UDP
+
+```
+udp
+```
+
+Porta específica
+
+```
+tcp.port == 80
+```
+
+IP específico
+
+```
+ip.addr == 192.168.0.10
+```
+
+Origem
+
+```
+ip.src == 192.168.0.10
+```
+
+Destino
+
+```
+ip.dst == 37.59.174.225
+```
+
+FIN
+
+```
+tcp.flags.fin == 1
+```
+
+SYN
+
+```
+tcp.flags.syn == 1
+```
+
+RST
+
+```
+tcp.flags.reset == 1
+```
+
+---
+
+# Fluxo Profissional de Investigação
+
+```
+PCAP
+   │
+   ▼
+Identificar IPs
+   │
+   ▼
+Identificar portas
+   │
+   ▼
+Identificar serviços
+   │
+   ▼
+Seguir TCP Stream
+   │
+   ▼
+Encontrar banners
+   │
+   ▼
+Encontrar versão
+   │
+   ▼
+Encontrar credenciais
+   │
+   ▼
+Encontrar exploração
+   │
+   ▼
+Encontrar evidências
+```
+
+---
+
+# Dica de Ouro
+
+Um analista experiente raramente lê os pacotes um a um.
+
+A sequência normalmente é:
+
+1. **Statistics → Endpoints** (quem participou?)
+2. **Statistics → Conversations** (quem falou com quem?)
+3. **Aplicar filtros** (`http`, `ftp`, `ssh`, `dns`, etc.).
+4. **Follow TCP Stream** para reconstruir a conversa.
+5. Se a captura for grande, usar **`strings`**, **`tshark`** ou **`tcpdump`** para localizar rapidamente banners, URLs, credenciais e versões de serviços.
+
+Essa abordagem economiza tempo e evita analisar milhares de pacotes desnecessariamente.
