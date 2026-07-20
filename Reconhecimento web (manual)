@@ -1,0 +1,49 @@
+# Reconhecimento Web (Manual)
+
+## 1. Mapeamento do Site
+- Navegue por todas as páginas.
+- Identifique formulários, login, cadastro, upload, APIs e áreas restritas.
+- Anote todos os endpoints encontrados.
+
+## 2. View Source
+- Ver comentários HTML (`<!-- -->`).
+- Procurar links ocultos (`href`).
+- Identificar arquivos JS, CSS e imagens.
+- Procurar diretórios expostos (Directory Listing).
+- Descobrir framework e versão.
+
+## 3. Inspector
+- Ver o HTML em tempo real.
+- Alterar elementos temporariamente.
+- Remover bloqueios visuais (paywall, pop-ups).
+- Encontrar campos ocultos.
+
+## 4. Debugger / Sources
+- Ler arquivos JavaScript.
+- Usar **Pretty Print** (`{}`).
+- Criar **Breakpoints** para pausar o código.
+- Entender a lógica da aplicação.
+
+## 5. Network
+- Ver todas as requisições HTTP.
+- Analisar:
+  - Headers
+  - Cookies
+  - Parâmetros
+  - Respostas
+- Descobrir APIs e endpoints ocultos.
+- Observar requisições AJAX.
+
+## 6. Storage
+- **Local Storage** → dados permanentes.
+- **Session Storage** → dados temporários.
+- **Cookies** → sessão, autenticação e preferências.
+- Verificar flags:
+  - HttpOnly
+  - Secure
+  - SameSite
+
+## Objetivo do Pentester
+- Entender como a aplicação funciona.
+- Descobrir funcionalidades escondidas.
+- Identificar possíveis pontos de ataque antes de explorar vulnerabilidades.
