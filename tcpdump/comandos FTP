@@ -1,0 +1,13 @@
+Outros comandos FTP importantes
+Comando	Significado	Indica
+USER	Usuário	Tentativa de login
+PASS	Senha	Autenticação
+230	Login bem-sucedido	Usuário autenticado
+LIST	Lista arquivos	Reconhecimento
+CWD	Entra em um diretório	Navegação
+PWD	Mostra o diretório atual	Navegação
+RETR	Baixa um arquivo	Exfiltração de dados
+STOR	Envia um arquivo	Upload
+DELE	Apaga um arquivo	Destruição de evidências
+RNFR / RNTO	Renomeia um arquivo	Alteração
+QUIT	Encerra a sessão	Logout
