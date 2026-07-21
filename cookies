@@ -1,0 +1,25 @@
+# Cookies:
+# Guardam sessão, login e preferências do usuário.
+
+# HttpOnly
+# Impede que JavaScript leia o cookie.
+# Protege contra XSS.
+
+# XSS (Cross-Site Scripting)
+# Atacante injeta JavaScript na página para roubar cookies ou agir como o usuário.
+
+# Secure
+# Cookie só é enviado usando HTTPS.
+# Evita que seja capturado em conexões HTTP.
+
+# SameSite
+# Impede que outros sites enviem automaticamente o cookie.
+# Protege contra CSRF.
+
+# CSRF (Cross-Site Request Forgery)
+# Engana o navegador da vítima a executar ações em um site onde ela já está logada
+# (ex.: trocar senha, fazer transferência, excluir conta).
+
+# Em um pentest:
+# Verifique se os cookies usam HttpOnly, Secure e SameSite.
+# A ausência desses atributos pode indicar falhas de segurança.
