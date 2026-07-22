@@ -1,0 +1,320 @@
+# Web Recon Moderno (2026)
+
+O Reconhecimento Web (Web Recon) é a primeira fase de um Pentest Web.
+
+Seu objetivo é coletar o máximo de informações sobre a aplicação antes de iniciar qualquer exploração.
+
+Um bom reconhecimento reduz o tempo gasto procurando vulnerabilidades e aumenta significativamente as chances de sucesso durante o Pentest.
+
+=====================================================================
+1. OSINT (Open Source Intelligence)
+=====================================================================
+
+Sempre começa aqui.
+
+Nenhuma requisição é enviada ao alvo. Toda informação é obtida através de fontes públicas.
+
+Objetivos:
+
+• Mapear a empresa
+• Descobrir domínios
+• Encontrar subdomínios
+• Identificar tecnologias
+• Localizar buckets S3 públicos
+• Encontrar IPs públicos
+• Procurar vazamentos de credenciais
+• Encontrar código fonte publicado
+
+Ferramentas:
+
+• Google Dorks
+• GitHub
+• Wayback Machine
+• Shodan
+• Censys
+• Wappalyzer
+• crt.sh
+• SecurityTrails
+• DNSDumpster
+
+=====================================================================
+2. Enumeração DNS
+=====================================================================
+
+Depois de identificar o domínio principal, inicia-se a enumeração de DNS.
+
+Objetivo:
+
+Descobrir todos os subdomínios pertencentes à organização.
+
+Exemplos:
+
+admin.empresa.com
+vpn.empresa.com
+mail.empresa.com
+api.empresa.com
+dev.empresa.com
+
+Ferramentas:
+
+• subfinder ⭐
+• amass ⭐
+• assetfinder
+• findomain
+• crt.sh
+
+Após descobrir os subdomínios, verifica-se quais realmente estão ativos utilizando:
+
+httpx
+
+O httpx informa:
+
+• Host ativo
+• Código HTTP
+• Título da página
+• Tecnologia
+• HTTPS
+• Redirects
+
+=====================================================================
+3. Descoberta de Conteúdo
+=====================================================================
+
+Agora procura-se por:
+
+• Diretórios
+• Arquivos
+• Painéis administrativos
+• APIs
+• Logs
+• Backups
+
+Ferramentas:
+
+★★★★★ ffuf
+★★★★☆ feroxbuster
+★★★☆☆ Gobuster
+
+Hoje o ffuf tornou-se praticamente o padrão da comunidade por oferecer:
+
+• Maior velocidade
+• Mais filtros
+• Melhor suporte a fuzzing
+• Mais flexibilidade
+
+=====================================================================
+4. Descoberta de Parâmetros
+=====================================================================
+
+Muitas aplicações possuem parâmetros ocultos que não aparecem durante a navegação.
+
+Exemplos:
+
+?id=
+?page=
+?debug=
+?token=
+?redirect=
+?user=
+
+Esses parâmetros podem levar a vulnerabilidades como:
+
+• IDOR
+• SQL Injection
+• XSS
+• SSRF
+
+Ferramenta recomendada:
+
+★★★★★ Arjun
+
+=====================================================================
+5. Crawlers
+=====================================================================
+
+Em vez de navegar manualmente, utilizam-se crawlers para percorrer automaticamente toda a aplicação.
+
+Eles encontram:
+
+• Links
+• Endpoints
+• APIs
+• Arquivos JavaScript
+• Recursos ocultos
+
+Ferramentas:
+
+• Katana (ProjectDiscovery)
+• Hakrawler
+• Gospider
+
+=====================================================================
+6. Análise de JavaScript
+=====================================================================
+
+Hoje uma das etapas mais importantes do Recon.
+
+Grande parte das aplicações modernas utiliza JavaScript para consumir APIs.
+
+Durante essa análise procura-se:
+
+• Endpoints internos
+• API Keys
+• Tokens
+• URLs ocultas
+• Rotas administrativas
+• Comentários esquecidos
+
+Ferramentas:
+
+• LinkFinder
+• SecretFinder
+• JSParser
+• Mantra
+
+=====================================================================
+7. HTTP Headers
+=====================================================================
+
+Os cabeçalhos HTTP revelam muitas informações sobre o servidor.
+
+Analisar:
+
+• Server
+• X-Powered-By
+• CSP (Content Security Policy)
+• CORS
+• HSTS
+• Cookies
+
+Esses headers ajudam a identificar:
+
+• Framework utilizado
+• Linguagem
+• Políticas de segurança
+• Possíveis falhas de configuração
+
+=====================================================================
+8. robots.txt e sitemap.xml
+=====================================================================
+
+Nunca devem ser ignorados.
+
+robots.txt
+
+Pode revelar:
+
+• Painéis administrativos
+• Diretórios ocultos
+• Áreas restritas
+
+sitemap.xml
+
+Pode revelar:
+
+• Endpoints
+• APIs
+• Páginas antigas
+• Conteúdo não indexado
+
+=====================================================================
+9. Framework Detection
+=====================================================================
+
+Identificar exatamente qual tecnologia está rodando.
+
+Exemplos:
+
+• WordPress
+• Laravel
+• Django
+• ASP.NET
+• Spring Boot
+• React
+• Angular
+
+Ferramentas:
+
+• Wappalyzer
+• WhatWeb
+• BuiltWith
+
+Conhecer a tecnologia permite pesquisar vulnerabilidades específicas daquela versão.
+
+=====================================================================
+10. Vulnerability Scan
+=====================================================================
+
+Somente após mapear toda a aplicação.
+
+Objetivo:
+
+Automatizar a busca por vulnerabilidades conhecidas.
+
+Ferramentas:
+
+★★★★★ Nuclei
+★★★★☆ Nikto
+★★★★☆ Nessus
+★★★★☆ OpenVAS
+
+Hoje o Nuclei tornou-se praticamente obrigatório no Recon moderno devido à enorme quantidade de templates atualizados pela comunidade.
+
+=====================================================================
+Fluxo Moderno de Web Recon
+=====================================================================
+
+OSINT
+   │
+   ▼
+Enumeração DNS
+(Subfinder / Amass)
+   │
+   ▼
+Validação dos Hosts
+(httpx)
+   │
+   ▼
+Crawler
+(Katana)
+   │
+   ▼
+Content Discovery
+(ffuf)
+   │
+   ▼
+Parameter Discovery
+(Arjun)
+   │
+   ▼
+JavaScript Analysis
+(LinkFinder)
+   │
+   ▼
+Vulnerability Scan
+(Nuclei)
+   │
+   ▼
+Burp Suite
+   │
+   ▼
+Exploração Manual
+
+=====================================================================
+Resumo
+=====================================================================
+
+OSINT               → Descobrir informações públicas
+DNS                 → Encontrar subdomínios
+httpx               → Descobrir hosts ativos
+Crawler             → Mapear toda a aplicação
+ffuf                → Encontrar diretórios e arquivos ocultos
+Arjun               → Descobrir parâmetros escondidos
+JavaScript          → Encontrar endpoints, APIs e segredos
+Headers             → Identificar tecnologias e configurações
+robots/sitemap      → Encontrar conteúdo oculto
+Framework Detection → Identificar a stack da aplicação
+Nuclei              → Detectar vulnerabilidades conhecidas
+Burp Suite          → Validar e explorar manualmente
+
+"O reconhecimento bem feito representa grande parte do sucesso de um Pentest Web. Quanto melhor o mapeamento da superfície de ataque, maiores as chances de identificar vulnerabilidades críticas."
